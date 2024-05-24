@@ -12,17 +12,18 @@ class CameraHandler:
         self.cameras = CameraController()
         self.frame_id = 0
         self.is_frame_limit = False
-        self.frame_limit = 4
+        self.frame_limit = 6
         pass
 
     def call(self):
         while True:
-            self.cameras.call()
-
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
             if self.is_frame_limit and self.frame_id > self.frame_limit:
-                break
+                continue
+
+            self.cameras.call()
+
             self.frame_id += 1
         pass

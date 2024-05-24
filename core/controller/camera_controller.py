@@ -9,7 +9,7 @@ class CameraController:
         self.image_objects = ImageObjects()
         self.draw_camera = DrawCamera()
         self.frame_id = 0
-        self.processing_frame = 5
+        self.processing_frame = 6
         pass
 
     def call(self):

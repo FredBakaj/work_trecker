@@ -1,13 +1,11 @@
 from collections import defaultdict
-from typing import Any
 
 import face_recognition
 import numpy as np
-from cv2 import Mat
-from numpy import ndarray, dtype, generic
 from ultralytics import YOLO
 
 from core.script.camera import Camera
+from core.script.person_definition import PersonDefinition
 from core.script.profile_tracking import ProfileTracking
 from core.utils.box_math import BoxMath
 
@@ -16,22 +14,21 @@ class ImageObjects:
     def __init__(self):
         self.camera: Camera = Camera()
         self.model_det_person = YOLO("core/ai_models/yolov8n.pt")
-        self.model_det_face = YOLO("core/ai_models/last.pt")
         self.track_history = defaultdict(lambda: [])
         self.profile_tracking = ProfileTracking()
         self.box_math = BoxMath()
+        self.person_definition = PersonDefinition()
+
         pass
 
     def get_objects(self, img) -> dict:
         result: dict = dict()
         detect_objects: list[dict] = list()
 
-        persons: list[dict] = self.profile_tracking.delta_time_call(self.get_persons.__name__,
-                                                                    lambda: self.get_persons(img))
+        persons: list[dict] = self.get_persons(img)
         faces: list[dict] = list()
         if persons is not None:
-            faces = self.profile_tracking.delta_time_call(self.get_faces.__name__,
-                                                          lambda: self.get_faces(img))
+            faces = self.get_faces(img)
             pass
 
         if persons is not None:
@@ -43,6 +40,9 @@ class ImageObjects:
                         face_box = face_["box"]
                         is_person_face = self.box_math.is_box_within(face_box, person_box)
                         if is_person_face:
+                            face_embedding = self.person_definition.face_encoding(img, face_box)
+                            person_id = self.person_definition.detect_human_id(face_embedding)
+                            face_["human_id"] = self.person_definition.person_id_2_name(person_id)
                             face = face_
 
                 result_data = dict()
@@ -112,51 +112,4 @@ class ImageObjects:
                 result.append(face_data)
         return result
 
-    def get_faces2(self, img):
-        result: list[dict] = list()
-        detect_results = self.model_det_face.track(img, persist=True, verbose=False)
-        names = self.names = self.model_det_face.model.names
 
-        boxes = detect_results[0].boxes.xyxy.cpu()
-
-        if len(boxes) > 0:
-            # Extract prediction detect_results
-            clss = detect_results[0].boxes.cls.cpu().tolist()
-            confs = detect_results[0].boxes.conf.float().cpu().tolist()
-            for box, cls in zip(boxes, clss):
-                result_data = dict()
-                result_data["cls"] = cls
-                result_data["box"] = box
-                result_data["names"] = names
-
-                result.append(result_data)
-
-        return result
-
-    def apply_mask_to_image(self, image, box):
-        # Распаковка координат бокса
-        x_min, y_min, x_max, y_max = box
-
-        # Создание маски того же размера, что и изображение, и заполнение ее нулями
-        mask = np.zeros(image.shape[:2], dtype=np.uint8)
-
-        # Установка области бокса на 1
-        mask[y_min:y_max, x_min:x_max] = 1
-
-        # Преобразование маски в формат с тремя каналами, если изображение цветное
-        if len(image.shape) == 3:
-            mask = np.stack([mask] * 3, axis=-1)
-
-        # Умножение изображения на маску
-        masked_image = image * mask
-
-        return masked_image
-
-    def get_person_recognition(self, img):
-        biden_encoding = self.profile_tracking.delta_time_call(face_recognition.face_encodings.__name__,
-                                                               lambda: face_recognition.face_encodings(img))
-        print(f"count faces {biden_encoding}")
-        # unknown_encoding = face_recognition.face_encodings(img)
-        #
-        # results = face_recognition.compare_faces([biden_encoding], unknown_encoding)
-        return
