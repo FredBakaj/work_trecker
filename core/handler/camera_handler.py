@@ -17,7 +17,7 @@ class CameraHandler:
 
     def call(self):
         while True:
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(20) & 0xFF == 27:  # Exit on pressing 'ESC'
                 break
 
             if self.is_frame_limit and self.frame_id > self.frame_limit:

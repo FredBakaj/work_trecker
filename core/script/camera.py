@@ -52,3 +52,9 @@ class Camera:
         # frame = cv2.resize(frame, (0, 0), fx=0.50, fy=0.50)
 
         return frame
+
+    def get_camera_size(self) -> tuple:
+        frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        return (frame_width, frame_height)
