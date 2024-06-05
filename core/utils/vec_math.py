@@ -26,9 +26,9 @@ class VecMath:
             return 0  # "on the line"
 
     def calculate_zone_line_vec(self, img_size: tuple, zone_line_normal_vec: tuple) -> tuple[Any, Any, Any, Any]:
-        zone_line_vec: tuple[Any, Any, Any, Any] = (zone_line_normal_vec[0] * img_size[0],
-                                                    zone_line_normal_vec[1] * img_size[1],
-                                                    zone_line_normal_vec[2] * img_size[0],
-                                                    zone_line_normal_vec[3] * img_size[1]
+        zone_line_vec: tuple[Any, Any, Any, Any] = (int(zone_line_normal_vec[0] * img_size[0]),
+                                                    int(zone_line_normal_vec[1] * img_size[1]),
+                                                    int(zone_line_normal_vec[2] * img_size[0]),
+                                                    int(zone_line_normal_vec[3] * img_size[1])
                                                     )
         return zone_line_vec

@@ -26,10 +26,22 @@ class DataBaseHandler:
             'camera_group_id': camera_group_id,
             'appeared_zone_id': appeared_zone_id
         }
-        #TODO remove
-        print(data)
+        # TODO remove print
+        print("appeared in camera \n", data)
 
         with open('data.json', 'w') as file:
             json.dump(data, file, indent=4)
         pass
 
+    def person_crossed_zone_create(self, person_id: int, camera_id: int, camera_group_id: int,
+                                   current_zone_id: int, abandoned_zone_id: int):
+        data = {
+            'person_id': person_id,
+            'camera_id': camera_id,
+            'camera_group_id': camera_group_id,
+            'current_zone_id': current_zone_id,
+            'abandoned_zone_id': abandoned_zone_id,
+        }
+        #TODO remove print
+        print("crossed_zone \n", data)
+        pass

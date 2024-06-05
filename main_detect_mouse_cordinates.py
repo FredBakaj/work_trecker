@@ -6,7 +6,7 @@ from core.script.camera import Camera
 # Callback function to print the coordinates of the mouse click
 def print_mouse_coordinates(event, x, y, flags, param, camera_width, camera_height):
     if event == cv2.EVENT_LBUTTONDOWN:  # Event when the left mouse button is pressed
-        normalize_coordinates = (x / camera_width, y / camera_width)
+        normalize_coordinates = (x / camera_width, y / camera_height)
         print(f"Mouse coordinates: ({x}, {y})")
         print(f"Mouse normalize coordinates: {normalize_coordinates}")
 

@@ -1,13 +1,14 @@
 import cv2
-from cv2 import VideoCapture, Mat
 from ultralytics.utils.plotting import colors, Annotator
+
+from core.utils.vec_math import VecMath
 
 
 class DrawCamera:
     def __init__(self):
-        pass
+        self.vec_math = VecMath()
 
-    def draw(self, img, image_objects_data: dict | None):
+    def draw(self, img, image_objects_data: dict | None, normal_line_zone: tuple | None, img_size: tuple):
         if image_objects_data is not None:
             detect_objects: list[dict] = image_objects_data["detect_objects"]
             annotator = Annotator(img, line_width=2)
@@ -32,7 +33,15 @@ class DrawCamera:
                                         label=person_names[int(person_cls)])
 
                     if len(person_track_move_points) > 1:
-                        #cv2.circle(img, (person_track_move_points[-1]), 7, colors(7, True), -1)
-                        cv2.polylines(img, [person_track_move_points], isClosed=False, color=colors(7, True), thickness=2)
+                        # cv2.circle(img, (person_track_move_points[-1]), 7, colors(7, True), -1)
+                        cv2.polylines(img, [person_track_move_points], isClosed=False, color=colors(7, True),
+                                      thickness=2)
+
+        if normal_line_zone is not None:
+            zone_line_vec = self.vec_math.calculate_zone_line_vec(img_size, normal_line_zone)
+            color = (255, 0, 0)  # Цвет линии (в данном случае, красный)
+            thickness = 2  # Толщина линии
+            cv2.line(img, (zone_line_vec[0], zone_line_vec[1]),
+                     (zone_line_vec[2], zone_line_vec[3]), color, thickness)
 
         cv2.imshow('Camera', img)

@@ -1,6 +1,7 @@
 from typing import Any
 
 from core.script.Events.appeared_person_in_camera_event import AppearedPersonInCameraEvent
+from core.script.Events.person_crossed_zone_event import PersonCrossedZoneEvent
 
 
 class Events:
@@ -16,7 +17,16 @@ class Events:
 
         self.camera_id: int = camera_id
         self.camera_group_id: int = camera_group_id
+
         self.appeared_person_in_camera_event = AppearedPersonInCameraEvent(
+            self.camera_id,
+            self.camera_group_id,
+            self.zone_line_normal_vec,
+            self.left_zone_id,
+            self.right_zone_id
+        )
+
+        self.person_crossed_zone_event = PersonCrossedZoneEvent(
             self.camera_id,
             self.camera_group_id,
             self.zone_line_normal_vec,
@@ -26,6 +36,7 @@ class Events:
 
     def call(self, img_obj_data: dict, img_size: tuple[Any, Any]) -> None:
         self.appeared_person_in_camera_event.call(img_obj_data, img_size)
+        self.person_crossed_zone_event.call(img_obj_data, img_size)
         pass
 
 
