@@ -9,13 +9,14 @@ class CameraController:
     def __init__(self):
         self.vec_math = VecMath()
 
-        self.normal_line_zone = (0.42916666666666664, 0.65, 0.809375, 0.8537037037037037)
+        #self.normal_line_zone = (0.42916666666666664, 0.65, 0.809375, 0.8537037037037037) # video 4
+        self.normal_line_zone = (0.875, 0.4925925925925926, 0.39375, 0.4888888888888889) # video 5
         self.camera = Camera()
         self.image_objects = ImageObjects()
         self.events = Events(0, 0, self.normal_line_zone, 0, 1)
         self.draw_camera = DrawCamera()
         self.frame_id = 0
-        self.processing_frame = 6
+        self.processing_frame = 1
 
     def call(self):
         self.frame_id += 1

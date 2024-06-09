@@ -32,8 +32,6 @@ class AppearedPersonInCameraEvent:
         detect_objects: list[dict] = img_obj_data["detect_objects"]
         zone_line_vec = self.vec_math.calculate_zone_line_vec(img_size, self.zone_line_normal_vec)
 
-        self._clear_triggered_appeared_person_collection(detect_objects)
-
         if detect_objects is not None:
             # logic of trigger response to new IDs
             for detect_object in detect_objects:
@@ -44,11 +42,11 @@ class AppearedPersonInCameraEvent:
                 person_track_move_points: list = person["track_move_points"]
                 person_track_id = person["track_id"]
 
-                if person_track_id not in self.triggered_appeared_person_collection.keys() \
-                        and len(person_track_move_points) > 0:
-
+                if len(person_track_move_points) == 1:
+                    if self.db.is_create_track_id(person_track_id):
+                        self.db.delete_person_id_by_track_id(person_track_id)
                     person_id: int = self.db.get_new_person_id()
-                    self.triggered_appeared_person_collection[person_track_id] = person_id
+                    self.db.create_person_id_by_track_id(person_track_id, person_id)
                     person_point = tuple(person_track_move_points[-1][0])
 
                     side_relative_to_vector = self.vec_math.point_relative_to_vector(
@@ -65,33 +63,3 @@ class AppearedPersonInCameraEvent:
 
                     self.db.appeared_person_in_camera_create(person_id, self.camera_id, self.camera_group_id,
                                                              appeared_zone_id)
-
-    # delete track IDs that are out of camera range
-    def _clear_triggered_appeared_person_collection(self, detect_objects: list[dict]):
-        persons: list = list()
-
-        if detect_objects is None:
-            self.triggered_appeared_person_collection.clear()
-        else:
-            for detect_object in detect_objects:
-                try:
-                    persons.append(detect_object["person"])
-                except:
-                    pass
-            #определяет все ид которые приходят с изображения
-            all_track_ids = [person["track_id"] for person in persons]
-            new_triggered_appeared_person_collection = dict()
-            #цикл по все ид которые были обработаны ранее
-            for person_collection_key in self.triggered_appeared_person_collection.keys():
-                #если ранее обработаного ид нету в колекции то добавить в его список на удаление
-                if person_collection_key not in all_track_ids:
-                    self.generations_of_appearances.append(person_collection_key)
-                # если кол-во записей на удаление привышает максимально допустимое, удалить это ид из колекции
-                if self.generations_of_appearances.count(person_collection_key) <= self.max_count_person_key:
-                    new_triggered_appeared_person_collection[person_collection_key] = \
-                        self.triggered_appeared_person_collection[person_collection_key]
-                else:
-                    #чистит список на удаление от того ид который был уже удалён из колекции triggered_appeared_person_collection
-                    self.generations_of_appearances = [key for key in self.generations_of_appearances if key != person_collection_key]
-
-            self.triggered_appeared_person_collection = new_triggered_appeared_person_collection

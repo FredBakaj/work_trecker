@@ -12,7 +12,11 @@ class Camera:
     def __init__(self) -> None:
         self.cap = cv2.VideoCapture(0)
         #from video
+        #video_path = "data/walk_video1.mp4"
         video_path = "data/video_bar4.mp4"
+        #video_path = "data/video_bar5.mp4"
+        #video_path = "data/video_bar6.mp4"
+        #video_path = "data/video_bar7.mp4"
         self.cap = cv2.VideoCapture(video_path)
         self.frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
         self.frame_id = 1
@@ -37,7 +41,7 @@ class Camera:
         # Read the frame
         ret, frame = self.cap.read()
         self.frame_id += 1
-        frame = cv2.resize(frame, (0, 0), fx=0.50, fy=0.50)
+        frame = cv2.resize(frame, (0, 0), fx=0.75, fy=0.75)
 
         #from url
         # url = "https://static.wikia.nocookie.net/nijisanjilore/images/e/ef/Humans.jpg/revision/latest?cb=20220830053327"

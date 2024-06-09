@@ -41,8 +41,8 @@ class ImageObjects:
                         is_person_face = self.box_math.is_box_within(face_box, person_box)
                         if is_person_face:
                             face_embedding = self.person_definition.face_encoding(img, face_box)
-                            person_id = self.person_definition.detect_human_id(face_embedding)
-                            face_["human_id"] = self.person_definition.person_id_2_name(person_id)
+                            human_id = self.person_definition.detect_human_id(face_embedding)
+                            face_["human_id"] = human_id
                             face = face_
 
                 result_data = dict()
