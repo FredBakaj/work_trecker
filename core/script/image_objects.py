@@ -4,7 +4,6 @@ import face_recognition
 import numpy as np
 from ultralytics import YOLO
 
-from core.script.camera import Camera
 from core.script.person_definition import PersonDefinition
 from core.script.profile_tracking import ProfileTracking
 from core.utils.box_math import BoxMath
@@ -12,7 +11,6 @@ from core.utils.box_math import BoxMath
 
 class ImageObjects:
     def __init__(self):
-        self.camera: Camera = Camera()
         self.model_det_person = YOLO("core/ai_models/yolov8n.pt")
         self.track_history = defaultdict(lambda: [])
         self.profile_tracking = ProfileTracking()

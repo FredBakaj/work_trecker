@@ -1,16 +1,14 @@
 {
-  "cameras" : {
-    "c1" : {
-      "id" : 1
-    },
-    "c2" : {
-      "id" : 2
-    },
-    "c3" : {
-      "id" : 3
-    },
-    "c4" : {
-      "id" : 4
+  "cameras_config" : [
+    {
+      "normal_line_zone" :  [0.875, 0.4925925925925926, 0.39375, 0.4888888888888889],
+      "camera_pc_id" : 0,
+      "camera_id" : 0,
+      "camera_group_id" : 0,
+      "left_zone_id" : 0,
+      "right_zone_id" : 1,
+      "processing_frame" : 6,
+      "frame_shift" : 0
     }
-  }
+  ]
 }
