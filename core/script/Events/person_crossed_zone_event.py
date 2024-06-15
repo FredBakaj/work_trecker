@@ -79,5 +79,5 @@ class PersonCrossedZoneEvent:
                         abandoned_zone_id = self.left_zone_id
 
                     self.db.person_crossed_zone_create(
-                        -1, self.camera_id,
+                        self.db.get_person_id_by_track_id(person_track_id), self.camera_id,
                         self.camera_group_id, current_zone_id, abandoned_zone_id)
