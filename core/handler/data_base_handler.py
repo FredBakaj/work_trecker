@@ -7,13 +7,25 @@ track_id_person_id_collection = dict()
 
 
 class DataBaseHandler:
-    def __init__(self):
+    def __init__(self, is_moke_datetime: bool = False):
+        self.is_moke_datetime = is_moke_datetime
         self.last_person_id_file_path: str = "data/meta/last_person_id.txt"
         self.last_person_id: int = None
         self.file_appeared_person_in_camera_path = "temp_storage/appeared_person_in_camera.json"
         self.track_id_person_id_collection_path = "temp_storage/track_id_person_id_collection.json"
 
-        pass
+        self.connection = pyodbc.connect(
+            'Driver={ODBC Driver 18 for SQL Server};'
+            'Server=tcp:db-server-work-tracker.database.windows.net,1433;'
+            'Database=db-work-tracker;'
+            'Uid=work-tracker-user;'
+            'Pwd=3ji2d093jmQQ;'
+            'Encrypt=yes;'
+            'TrustServerCertificate=no;'
+            'Connection Timeout=30;'
+
+        )
+        self.moke_datetime = None
 
     def get_new_person_id(self) -> int:
         if self.last_person_id is None:
@@ -37,6 +49,9 @@ class DataBaseHandler:
     def is_create_track_id(self, track_id):
         return track_id in track_id_person_id_collection.keys()
 
+    def set_moke_datetime(self, value: datetime):
+        self.moke_datetime = value
+
     def appeared_person_in_camera_create(self, person_id: int, camera_id: int, camera_group_id: int,
                                          appeared_zone_id: int):
         attributes = [
@@ -49,12 +64,11 @@ class DataBaseHandler:
         print("appeared in camera \n", attributes)
         self._event_log_insert("appeared_in_camera", attributes)
 
-
         pass
 
     def person_crossed_zone_create(self, person_id: int, camera_id: int, camera_group_id: int,
                                    current_zone_id: int, abandoned_zone_id: int):
-        attributes =[
+        attributes = [
             ('person_id', int.__name__, person_id),
             ('camera_id', int.__name__, camera_id),
             ('camera_group_id', int.__name__, camera_group_id),
@@ -81,26 +95,18 @@ class DataBaseHandler:
 
         pass
 
+
+
     def _get_connection(self):
-        connection = pyodbc.connect(
-            'Driver={ODBC Driver 18 for SQL Server};'
-            'Server=tcp:db-server-work-tracker.database.windows.net,1433;'
-            'Database=db-work-tracker;'
-            'Uid=work-tracker-user;'
-            'Pwd=3ji2d093jmQQ;'
-            'Encrypt=yes;'
-            'TrustServerCertificate=no;'
-            'Connection Timeout=30;'
-
-
-        )
+        connection = self.connection
         return connection
 
     def _event_log_insert(self, log_type: str, attributes: list[tuple]):
+        log_datetime = datetime.utcnow() if not self.is_moke_datetime else self.moke_datetime
         connection = self._get_connection()
         cursor = connection.cursor()
         # Вставка нового лога
-        cursor.execute("INSERT INTO Logs (timestamp, log_type) VALUES (?, ?)", datetime.utcnow(), log_type)
+        cursor.execute("INSERT INTO Logs (timestamp, log_type) VALUES (?, ?)", log_datetime, log_type)
         cursor.execute("SELECT @@IDENTITY AS id")
         log_id = cursor.fetchone()[0]
 
@@ -119,4 +125,39 @@ class DataBaseHandler:
                            value)
         connection.commit()
         cursor.close()
-        connection.close()
+
+    def get_person_identification_log(self, human_id: int):
+        connection = self._get_connection()
+        cursor = connection.cursor()
+        cursor.execute(f"""select log_id, [value], attribute_name from Logs l
+                                join LogValues lv on lv.log_id = l.id
+                                inner join Attributes a on a.id = lv.attribute_id
+                                where log_type = 'person_identification'
+                                and log_id in (select log_id from Logs l
+                                            join LogValues lv on lv.log_id = l.id
+                                            inner join Attributes a on a.id = lv.attribute_id
+                                            where attribute_name = 'human_id'
+                                                and [value] = {human_id})
+                                and (attribute_name = 'human_id' or attribute_name = 'person_id')""")
+        rows = [tuple(row) for row in cursor.fetchall()]
+        connection.commit()
+        cursor.close()
+        return rows
+
+    def get_report_by_person_ids(self, person_ids: list):
+        connection = self._get_connection()
+        cursor = connection.cursor()
+        cursor.execute(f"""select log_id, [value], attribute_name, [timestamp] from Logs l
+                            join LogValues lv on lv.log_id = l.id
+                            inner join Attributes a on a.id = lv.attribute_id
+                            where log_type = 'crossed_zone'
+                            and log_id in (select log_id from Logs l
+                                        join LogValues lv on lv.log_id = l.id
+                                        inner join Attributes a on a.id = lv.attribute_id
+                                        where attribute_name = 'person_id'
+                                            and value in {tuple(person_ids)}
+                                        )""")
+        rows = [tuple(row) for row in cursor.fetchall()]
+        connection.commit()
+        cursor.close()
+        return rows
