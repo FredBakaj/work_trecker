@@ -43,9 +43,9 @@ class Camera:
         #from url
         # url = "https://static.wikia.nocookie.net/nijisanjilore/images/e/ef/Humans.jpg/revision/latest?cb=20220830053327"
         # response = requests.get(url)
-        # # Преобразование содержимого в формат, подходящий для чтения OpenCV
+        # # Перетворення вмісту у формат, придатний для читання OpenCV
         # image_data = np.array(bytearray(response.content), dtype=np.uint8)
-        # # Чтение изображения с использованием OpenCV
+        # # Читання зображення з використанням OpenCV
         # frame = cv2.imdecode(image_data, cv2.IMREAD_COLOR)
 
         #from file

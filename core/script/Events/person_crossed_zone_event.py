@@ -42,30 +42,30 @@ class PersonCrossedZoneEvent:
                 person_names = person["names"]
                 person_track_move_points: list = person["track_move_points"]
                 person_track_id = person["track_id"]
-                # если в колекции позиций меньше 2 записей значит, что персонаж только появился, и не может
-                # пересечь границу
+                # якщо в колекції позицій менше 2 записів, значить, що персонаж щойно з'явився, і не може
+                # перетнути кордон
                 if len(person_track_move_points) < 2: continue
                 # person_id: int = self.db.get_new_person_id()
                 # self.triggered_person_crossed_zone_collection[person_track_id] = person_id
 
-                # --определение пересечения граници
+                # --визначення перетину межі
                 previous_person_point = tuple(person_track_move_points[-2][0])
                 person_point = tuple(person_track_move_points[-1][0])
-                # определяет зону с предедущего кадра
+                # визначає зону з попереднього кадру
                 previous_side_relative_to_vector = self.vec_math.point_relative_to_vector(
                     (zone_line_vec[0], zone_line_vec[1]),
                     (zone_line_vec[2], zone_line_vec[3]),
                     previous_person_point
                 )
 
-                # определяет зону с текущего кадра
+                # визначає зону з поточного кадру
                 side_relative_to_vector = self.vec_math.point_relative_to_vector(
                     (zone_line_vec[0], zone_line_vec[1]),
                     (zone_line_vec[2], zone_line_vec[3]),
                     person_point
                 )
 
-                # если зоны не совпадают то считаем что был переход между зонами
+                # якщо зони не збігаються, то вважаємо, що був перехід між зонами
                 if previous_side_relative_to_vector != side_relative_to_vector:
 
                     # zone id, based on the position of the point relative to the vector

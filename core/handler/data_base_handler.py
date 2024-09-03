@@ -105,7 +105,7 @@ class DataBaseHandler:
         log_datetime = datetime.utcnow() if not self.is_moke_datetime else self.moke_datetime
         connection = self._get_connection()
         cursor = connection.cursor()
-        # Вставка нового лога
+        # Вставка нового логу
         cursor.execute("INSERT INTO Logs (timestamp, log_type) VALUES (?, ?)", log_datetime, log_type)
         cursor.execute("SELECT @@IDENTITY AS id")
         log_id = cursor.fetchone()[0]

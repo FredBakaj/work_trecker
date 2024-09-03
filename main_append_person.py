@@ -3,11 +3,11 @@ import face_recognition
 from core.script.person_definition import PersonDefinition
 
 def get_image_names(folder_path):
-    # Поддерживаемые расширения изображений
+    # Підтримувані розширення зображень
     image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff')
-    # Получаем список файлов в указанной папке
+    # Отримуємо список файлів у вказаній папці
     files = os.listdir(folder_path)
-    # Отбираем только файлы с расширениями изображений
+    # Відбираємо тільки файли з розширеннями зображень
     image_names = [file for file in files if file.lower().endswith(image_extensions)]
 
     return image_names

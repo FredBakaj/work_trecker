@@ -11,7 +11,7 @@ class PersonIdentificationEvent:
 
         self.camera_id: int = camera_id
         self.camera_group_id: int = camera_group_id
-        # хранит в себе ид тех людей, которые уже были записаны
+        # зберігає в собі ід тих людей, які вже були записані
         self.person_records: dict = dict()
         self.db = DataBaseHandler()
         self.vec_math = VecMath()
@@ -35,8 +35,8 @@ class PersonIdentificationEvent:
                     person_track_id = person["track_id"]
                     face_human_id = face["human_id"]
                     person_id = self.db.get_person_id_by_track_id(person_track_id)
-                    # проверка на то нету ли track id в колекции или не равен track id значению person id
-                    # это значит что появился новый person id у track id и это нужно записать в базу
+                    # перевірка на те чи немає track id у колекції або не дорівнює track id значенню person id
+                    # це означає що з'явився новий person id у track id і це потрібно записати в базу
                     if (len(self.person_records.keys()) == 0
                             or any([key == person_track_id and value != person_id for key, value in
                                     list(self.person_records.items())])

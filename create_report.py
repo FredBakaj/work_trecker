@@ -3,7 +3,7 @@ import pandas as pd
 from core.handler.data_base_handler import DataBaseHandler
 
 def get_human_time_spent_of_all_zone(db:DataBaseHandler, human_id:int):
-    # получение распознаных пользователей
+    # отримання розпізнаних користувачів
     persons = db.get_person_identification_log(human_id)
     df = pd.DataFrame(persons, columns=['log_id', 'value', 'attribute_name'])
     df_persons = df.pivot_table(index='log_id', columns='attribute_name', values='value', aggfunc='first').reset_index()
@@ -16,14 +16,14 @@ def get_human_time_spent_of_all_zone(db:DataBaseHandler, human_id:int):
     pivot_df.reset_index(inplace=True)
     df = pivot_df.sort_values(by='timestamp')
 
-    # сумарное время в каждой зоне
-    # Добавляем столбец с днем
+    # сумарний час у кожній зоні
+    # Додаємо стовпець із днем
     df['date'] = df['timestamp'].dt.date
-    # Вычисляем время, проведенное в каждой зоне
+    # Додаємо стовпець із днем # Обчислюємо час, проведений у кожній зоні
     df['time_spent'] = df['timestamp'].diff().fillna(pd.Timedelta(seconds=0))
-    # Группируем по дню и зоне, суммируем время
+    # Групуємо за днем і зоною, підсумовуємо час
     daily_time_spent = df.groupby(['date', 'current_zone_id'])['time_spent'].sum().reset_index()
-    # Переименовываем столбцы для ясности
+    # Перейменовуємо стовпці для ясності
     daily_time_spent.columns = ['Date', 'Zone', 'Time Spent']
     # daily_time_spent.to_csv("daily_time_spent.csv", sep=';', index=False)
     return daily_time_spent

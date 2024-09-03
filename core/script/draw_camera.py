@@ -39,8 +39,8 @@ class DrawCamera:
 
         if normal_line_zone is not None:
             zone_line_vec = self.vec_math.calculate_zone_line_vec(img_size, normal_line_zone)
-            color = (255, 0, 0)  # Цвет линии (в данном случае, красный)
-            thickness = 2  # Толщина линии
+            color = (255, 0, 0)  # Колір лінії (в даному випадку, червоний)
+            thickness = 2  # Товщина лінії
             cv2.line(img, (zone_line_vec[0], zone_line_vec[1]),
                      (zone_line_vec[2], zone_line_vec[3]), color, thickness)
 

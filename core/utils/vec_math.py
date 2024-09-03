@@ -4,18 +4,18 @@ from typing import Any
 class VecMath:
     def point_relative_to_vector(self, A, B, P):
         """
-        Определяет, на какой стороне от вектора AB находится точка P.
+        Визначає, на якій стороні від вектора AB розташована точка P.
 
-        :param A: кортеж (x1, y1) координаты точки A
-        :param B: кортеж (x2, y2) координаты точки B
-        :param P: кортеж (x3, y3) координаты точки P
-        :return: строка "left", "right" или "on the line"
+        :param A: кортеж (x1, y1) координати точки A
+        :param B: кортеж (x2, y2) координати точки B
+        :param P: кортеж (x3, y3) координати точки P
+        :return: рядок "left", "right" або "on the line"
         """
         x1, y1 = A
         x2, y2 = B
         x3, y3 = P
 
-        # Вычисление псевдоскалярного произведения
+        # Обчислення псевдоскалярного добутку
         cross = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
 
         if cross > 0:
